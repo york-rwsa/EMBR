@@ -4,14 +4,6 @@
 #include "lpc17xx_uart.h"  // Central include files
 #include "lpc_types.h"
 
-// Entry point for the program
-void main(void) {
-  serial_init();
-  write_usb_serial_blocking("USB test code\n\r", 16);
-  while (1)
-    ;
-}
-
 // Read options
 int read_usb_serial_none_blocking(char *buf, int length) {
   return (UART_Receive((LPC_UART_TypeDef *)LPC_UART0, (uint8_t *)buf, length,
