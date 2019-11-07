@@ -16,6 +16,10 @@ void ledNumber(int number) {
   GPIO_SetValue(LEDPORT, output);
 }
 
-void clearLeds() { GPIO_ClearValue(LEDPORT, LEDPINS); }
+void clearLeds() {
+  GPIO_ClearValue(LEDPORT, LEDPINS);
+}
 
-void setupLeds() { GPIO_SetDir(LEDPORT, LEDPINS, 1); }
+void setupLeds() {
+  GPIO_SetDir(LEDPORT, LEDPINS, 1);
+}
