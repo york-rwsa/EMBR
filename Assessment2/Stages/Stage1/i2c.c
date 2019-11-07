@@ -33,17 +33,17 @@ int main() {
   transferCfg.rx_data = NULL;
   transferCfg.rx_length = 0;
 
-  write_usb_serial_blocking("Scanning I2C Bus:\r\n", 19);
+  write_usb_serial_blocking("\r\nScanning I2C Bus:\r\n", 21);
   transferCfg.sl_addr7bit = 15;
 
-  char buf[16];
+  char buf[7];
   int i;
   for (i = 0; i < 128; i++) {
     transferCfg.sl_addr7bit = i;
     
     if (I2C_MasterTransferData(I2CDEV, &transferCfg, I2C_TRANSFER_POLLING) == SUCCESS) {
-      sprintf(buf, "%d\r\n", i);
-      write_usb_serial_blocking(buf, 16);
+      sprintf(buf, "0x%x\r\n", i);
+      write_usb_serial_blocking(buf, 7);
     }
   }
 
