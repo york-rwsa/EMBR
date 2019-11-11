@@ -7,7 +7,7 @@ uint8_t one_hot_decoder_4bit(uint8_t val);
 char keypad_map(uint8_t col, uint8_t row);
 
 char keypad_read() {
-  uint8_t tx, rx, row;
+  uint8_t tx, rx, r, row, col;
 
   I2C_M_SETUP_Type cfg;
   cfg.sl_addr7bit = KEYPAD_ADDRESS;
@@ -22,10 +22,16 @@ char keypad_read() {
     // send the column address and recieve the row address
     I2C_MasterTransferData(I2C1DEV, &cfg, I2C_TRANSFER_POLLING);
 
-    for (row = 0x01; row <= 0x08; row <<= 1) {
-      if ((~rx & 0x0F) & row) {
-        return keypad_map(one_hot_decoder_4bit(~tx >> 4) - 1,
-                          one_hot_decoder_4bit(~rx) - 1);
+    for (r = 0x01; r <= 0x08; r <<= 1) {
+      if (~rx & r) {
+        col = one_hot_decoder_4bit(~tx >> 4);
+        row = one_hot_decoder_4bit(~rx);
+
+        if (row == 0 || col == 0) {
+          return 0;
+        } else {
+          return keypad_map(col - 1, row - 1);
+        }
       }
     }
   }
