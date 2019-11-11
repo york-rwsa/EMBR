@@ -1,10 +1,11 @@
 #include "lpc17xx_i2c.h"
 #include "lpc_types.h"
 
-#include "../../lib/serial.h"
-#include "../../lib/util_macros.h"
 #include "i2c.h"
 #include "lcd.h"
+#include "util_macros.h"
+
+uint8_t cursor_address = 0x00;
 
 void lcd_init() {
   uint8_t init_cmds[] = {
@@ -51,6 +52,21 @@ void lcd_send_char(char ch, uint8_t addr) {
 
   lcd_send_data(instructions, 2);
   lcd_send_data(data, 2);
+}
+
+void lcd_write_char_at_cursor(char ch) {
+  lcd_send_char(ch, cursor_address);
+  if (cursor_address >= 0x0F && cursor_address < 0x40) {
+    cursor_address = 0x40;
+  } else if (cursor_address >= 0x4F) {
+    cursor_address = 0x00;
+  } else {
+    cursor_address++;
+  }
+}
+
+void lcd_set_cursor_addr(uint8_t addr) {
+  cursor_address = addr;
 }
 
 void lcd_send_string(char *string, uint8_t start_addr) {

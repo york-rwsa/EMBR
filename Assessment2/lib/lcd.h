@@ -29,5 +29,7 @@ void lcd_send_string(char *string, uint8_t start_addr);
 void lcd_clear_display();
 
 void lcd_send_char(char ch, uint8_t start_addr);
+void lcd_write_char_at_cursor(char ch);
+void lcd_set_cursor_addr(uint8_t addr);
 
 uint8_t lcd_char_map(uint8_t index);
