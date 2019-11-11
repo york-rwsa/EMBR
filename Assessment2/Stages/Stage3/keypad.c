@@ -1,0 +1,64 @@
+#include "lpc17xx_i2c.h"
+
+#include <stdio.h>
+#include "../../lib/i2c.h"
+#include "../../lib/serial.h"
+#include "keypad.h"
+
+uint8_t one_hot_decoder_4bit(uint8_t val);
+
+/*
+  scan over rows each time shifting row mask
+    scan over each column until you find the key press
+
+ */
+char keypad_map(uint8_t cell) {
+  static char map[] = {'D', 'C', 'B', 'A', '#', '9', '6', '3',
+                       '0', '8', '5', '2', '*', '7', '4', '1'};
+
+  return map[cell];
+}
+
+char keypad_read() {
+  uint8_t tx, rx, row, cell;
+
+  I2C_M_SETUP_Type cfg;
+  cfg.sl_addr7bit = KEYPAD_ADDRESS;
+  cfg.rx_data = &rx;
+  cfg.rx_length = 1;
+  cfg.tx_data = &tx;
+  cfg.tx_length = 1;
+
+  // start tx = 0b11101111
+  // this mean it starts column Y1
+  for (tx = ~0x10; tx < 0xFF; tx = ~(~tx << 1)) {
+    // send the column address and recieve the row address
+    I2C_MasterTransferData(I2C1DEV, &cfg, I2C_TRANSFER_POLLING);
+
+    for (row = 0x01; row <= 0x08; row <<= 1) {
+      if ((~rx & 0x0F) & row) {
+        cell = (one_hot_decoder_4bit(~tx >> 4) - 1) * 4 + one_hot_decoder_4bit(~rx) - 1;
+
+        return keypad_map(cell);
+      }
+    }
+  }
+
+  return 0;
+}
+
+uint8_t one_hot_decoder_4bit(uint8_t val) {
+  val &= 0x0F;
+  switch (val) {
+    case 0x01:
+      return 1;
+    case 0x02:
+      return 2;
+    case 0x04:
+      return 3;
+    case 0x08:
+      return 4;
+    default:
+      return 0;
+  }
+}
