@@ -1,6 +1,9 @@
 #include "lpc17xx_i2c.h"
 #include "lpc_types.h"
 
+#include <stdarg.h>
+#include <stdio.h>
+
 #include "i2c.h"
 #include "lcd.h"
 #include "util_macros.h"
@@ -23,6 +26,7 @@ void lcd_send_data(uint8_t *data, uint32_t length) {
   cfg.rx_data = NULL;
   cfg.tx_data = data;
   cfg.tx_length = length;
+  cfg.retransmissions_max = 2;
 
   I2C_MasterTransferData(I2C1DEV, &cfg, I2C_TRANSFER_POLLING);
 }
@@ -44,6 +48,8 @@ void lcd_clear_display() {
   lcd_send_data(resetInstructions, LEN(resetInstructions));
   lcd_send_data(data, LEN(data));
   lcd_send_data(onInstructions, LEN(onInstructions));
+
+  lcd_set_cursor_addr(0);
 }
 
 void lcd_send_char(char ch, uint8_t addr) {
@@ -107,4 +113,19 @@ uint8_t lcd_char_map(uint8_t index) {
     ['x'] = 0xF8,       ['y'] = 0xF9, ['z'] = 0xFA};
 
   return LCD_CHARSET[index <= 128 ? index : 0];
+}
+
+int lcd_printf(uint8_t start_addr, const char *format, ...) {
+  va_list arg;
+  char buf[40];
+  int done;
+
+  va_start(arg, format);
+  done = vsprintf((char *)&buf, format, arg);
+  va_end(arg);
+
+  if (done > 0)
+    lcd_send_string((char *)&buf, start_addr);
+
+  return done;
 }
