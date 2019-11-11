@@ -12,15 +12,14 @@ uint8_t one_hot_decoder_4bit(uint8_t val);
     scan over each column until you find the key press
 
  */
-char keypad_map(uint8_t cell) {
-  static char map[] = {'D', 'C', 'B', 'A', '#', '9', '6', '3',
-                       '0', '8', '5', '2', '*', '7', '4', '1'};
+char keypad_map(uint8_t col, uint8_t row) {
+  static char map[4][4] = {"DCBA", "#963", "0852", "*741"};
 
-  return map[cell];
+  return map[col][row];
 }
 
 char keypad_read() {
-  uint8_t tx, rx, row, cell;
+  uint8_t tx, rx, row;
 
   I2C_M_SETUP_Type cfg;
   cfg.sl_addr7bit = KEYPAD_ADDRESS;
@@ -37,9 +36,8 @@ char keypad_read() {
 
     for (row = 0x01; row <= 0x08; row <<= 1) {
       if ((~rx & 0x0F) & row) {
-        cell = (one_hot_decoder_4bit(~tx >> 4) - 1) * 4 + one_hot_decoder_4bit(~rx) - 1;
-
-        return keypad_map(cell);
+        return keypad_map(one_hot_decoder_4bit(~tx >> 4) - 1,
+                          one_hot_decoder_4bit(~rx) - 1);
       }
     }
   }
