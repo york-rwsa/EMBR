@@ -27,3 +27,7 @@ void lcd_send_string(char *string, uint8_t start_addr);
  * Clears the lcd display by overwriting each cell with ' '
  */
 void lcd_clear_display();
+
+void lcd_send_char(char ch, uint8_t start_addr);
+
+uint8_t lcd_char_map(uint8_t index);

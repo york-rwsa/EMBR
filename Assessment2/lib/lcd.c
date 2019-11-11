@@ -45,7 +45,30 @@ void lcd_clear_display() {
   lcd_send_data(onInstructions, LEN(onInstructions));
 }
 
+void lcd_send_char(char ch, uint8_t addr) {
+  uint8_t instructions[] = {LCDCMD_ControlByte(0, 0), LCDCMD_SetDDRAM(addr)};
+  uint8_t data[] = {LCDCMD_ControlByte(0, 1), lcd_char_map(ch)};
+
+  lcd_send_data(instructions, 2);
+  lcd_send_data(data, 2);
+}
+
 void lcd_send_string(char *string, uint8_t start_addr) {
+  uint8_t instructions[] = {LCDCMD_ControlByte(0, 0), LCDCMD_SetDDRAM(start_addr)};
+
+  uint8_t data[DDRAM_SIZE + 1] = {LCDCMD_ControlByte(0, 1)};
+
+  uint8_t i = 0;
+  while (i <= DDRAM_SIZE && string[i] != '\0') {
+    data[i + 1] = lcd_char_map(string[i]);
+    i++;
+  }
+
+  lcd_send_data(instructions, LEN(instructions));
+  lcd_send_data(data, i + 1);
+}
+
+uint8_t lcd_char_map(uint8_t index) {
   static const uint8_t LCD_CHARSET[128] = {
     [0 ... 127] = 0xE0,  // flipped ? as default symbol
     [' '] = 0x91,       ['!'] = 0xA1, ['"'] = 0xA2,  ['#'] = 0xA3, ['$'] = 0x82,
@@ -67,16 +90,5 @@ void lcd_send_string(char *string, uint8_t start_addr) {
     ['s'] = 0xF3,       ['t'] = 0xF4, ['u'] = 0xF5,  ['v'] = 0xF6, ['w'] = 0xF7,
     ['x'] = 0xF8,       ['y'] = 0xF9, ['z'] = 0xFA};
 
-  uint8_t instructions[] = {LCDCMD_ControlByte(0, 0), LCDCMD_SetDDRAM(start_addr)};
-
-  uint8_t data[DDRAM_SIZE + 1] = {LCDCMD_ControlByte(0, 1)};
-
-  uint8_t i = 0;
-  while (i <= DDRAM_SIZE && string[i] != '\0') {
-    data[i + 1] = LCD_CHARSET[string[i] <= 128 ? string[i] : 0];
-    i++;
-  }
-
-  lcd_send_data(instructions, LEN(instructions));
-  lcd_send_data(data, i + 1);
+  return LCD_CHARSET[index <= 128 ? index : 0];
 }
