@@ -1,7 +1,7 @@
 #include "serial.h"
 
-#include <stdio.h>
 #include <stdarg.h>
+#include <stdio.h>
 
 #include "lpc17xx_pinsel.h"
 #include "lpc17xx_uart.h"
@@ -49,23 +49,25 @@ void serial_init(void) {
 }
 
 int serial_read(char *buf, int length) {
-	return(UART_Receive((LPC_UART_TypeDef *)LPC_UART0, (uint8_t *)buf, length, NONE_BLOCKING));
+  return (
+    UART_Receive((LPC_UART_TypeDef *)LPC_UART0, (uint8_t *)buf, length, NONE_BLOCKING));
 }
 
 int serial_write(char *buf, int length) {
-	return(UART_Send((LPC_UART_TypeDef *)LPC_UART0, (uint8_t *)buf, length, BLOCKING));
+  return (UART_Send((LPC_UART_TypeDef *)LPC_UART0, (uint8_t *)buf, length, BLOCKING));
 }
 
 int serial_printf(const char *format, ...) {
-	va_list arg;
-	char buf[100];
-	int done;
+  va_list arg;
+  char buf[100];
+  int done;
 
-	va_start(arg, format);
-	done = vsprintf((char*) &buf, format, arg);
-	va_end(arg);
+  va_start(arg, format);
+  done = vsprintf((char *)&buf, format, arg);
+  va_end(arg);
 
-	if(done > 0) serial_write((char*) &buf, done);
+  if (done > 0)
+    serial_write((char *)&buf, done);
 
-	return done;
+  return done;
 }
