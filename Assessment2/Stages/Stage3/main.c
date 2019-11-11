@@ -30,9 +30,9 @@ int main() {
 
     prev = keypad;
 
-    write_usb_serial_blocking("out: ", 6);
-    write_usb_serial_blocking(&keypad, 1);
-    write_usb_serial_blocking("\r\n", 2);
+    serial_write("out: ", 6);
+    serial_write(&keypad, 1);
+    serial_write("\r\n", 2);
 
     lcd_send_char(keypad, addr);
     if (addr >= 0x0F && addr < 0x40) {

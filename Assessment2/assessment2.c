@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include "lib/i2c.h"
 #include "lib/keypad.h"
 #include "lib/lcd.h"
@@ -41,23 +40,19 @@ void stage1() {
   transferCfg.rx_length = 0;
   transferCfg.retransmissions_max = 2;
 
-  write_usb_serial_blocking("\r\nScanning I2C Bus:\r\n", 21);
+  serial_write("\r\nScanning I2C Bus:\r\n", 21);
 
-  char buf[7];
   int n = 0;
   int i;
   for (i = 1; i < 128; i++) {
     transferCfg.sl_addr7bit = i;
     if (I2C_MasterTransferData(I2C1DEV, &transferCfg, I2C_TRANSFER_POLLING) == SUCCESS) {
-      sprintf(buf, "0x%X\r\n", i);
-      write_usb_serial_blocking(buf, 7);
+      serial_printf("0x%X\r\n", i);
       n++;
     }
   }
 
-  sprintf(buf, "%d ", n);
-  write_usb_serial_blocking(buf, 3);
-  write_usb_serial_blocking("devices found\r\n", 16);
+  serial_printf("%d devices found\r\n", n);
 }
 
 void stage2() {

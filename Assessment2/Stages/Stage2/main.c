@@ -10,7 +10,7 @@ int main() {
   i2c1_init();
   lcd_init();
 
-  write_usb_serial_blocking("\r\nstarting lcd test\r\n", 22);
+  serial_write("\r\nstarting lcd test\r\n", 22);
 
   lcd_clear_display();
   lcd_send_string("abcdefghijklmopq", 0x00);
