@@ -10,6 +10,7 @@
 
 void stage1();
 void stage2();
+void stage3();
 
 int main() {
   serial_init();
