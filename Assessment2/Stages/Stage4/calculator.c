@@ -9,7 +9,7 @@
 char get_next_char();
 char map_to_op(char ch);
 int8_t char_to_int(char ch);
-int calc(int i1, int i2, char op);
+float calc(int i1, int i2, char op);
 
 int main() {
   serial_init();
@@ -24,7 +24,8 @@ int main() {
   serial_write("\r\nStarting Calculator\r\n", 24);
 
   char next_ch, op;
-  int int1, int2, result;
+  int int1, int2;
+  float result;
 
   while (1) {
     next_ch = get_next_char();
@@ -49,8 +50,8 @@ int main() {
       } else if (op != 0) {
         if (next_ch == '#') {
           result = calc(int1, int2, op);
-          serial_printf("\r\n%d %c %d = %d\r\n", int1, op, int2, result);
-          lcd_printf(0x40, "=%d", result);
+          serial_printf("\r\n%d %c %d = %f\r\n", int1, op, int2, result);
+          lcd_printf(0x40, "=%f", result);
           break;
         }
       } else {
@@ -101,6 +102,8 @@ char map_to_op(char ch) {
       return '+';
     case 'B':
       return '-';
+    case 'C': 
+      return '/';
     case '*':
       return '*';
     default:
@@ -108,12 +111,14 @@ char map_to_op(char ch) {
   }
 }
 
-int calc(int i1, int i2, char op) {
+float calc(int i1, int i2, char op) {
   switch (op) {
     case '+':
       return i1 + i2;
     case '-':
       return i1 - i2;
+    case '/':
+      return (float)i1 / (float)i2;
     case '*':
       return i1 * i2;
     default:

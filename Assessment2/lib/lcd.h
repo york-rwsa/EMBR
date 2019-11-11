@@ -66,7 +66,7 @@ uint8_t lcd_char_map(uint8_t index);
 
 /**
  * @brief printf to lcd
- * 
+ *
  * @param start_addr starting addr to write to, 0x40 is start of line 2
  * @param format printf format string
  * @param ... format args
