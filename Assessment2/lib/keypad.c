@@ -4,17 +4,7 @@
 #include "keypad.h"
 
 uint8_t one_hot_decoder_4bit(uint8_t val);
-
-/*
-  scan over rows each time shifting row mask
-    scan over each column until you find the key press
-
- */
-char keypad_map(uint8_t col, uint8_t row) {
-  static char map[4][4] = {"DCBA", "#963", "0852", "*741"};
-
-  return map[col][row];
-}
+char keypad_map(uint8_t col, uint8_t row);
 
 char keypad_read() {
   uint8_t tx, rx, row;
@@ -41,6 +31,12 @@ char keypad_read() {
   }
 
   return 0;
+}
+
+char keypad_map(uint8_t col, uint8_t row) {
+  static char map[4][4] = {"DCBA", "#963", "0852", "*741"};
+
+  return map[col][row];
 }
 
 uint8_t one_hot_decoder_4bit(uint8_t val) {
