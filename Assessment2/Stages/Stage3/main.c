@@ -1,26 +1,48 @@
 #include <stdio.h>
 #include "../../lib/i2c.h"
+#include "../../lib/lcd.h"
 #include "../../lib/serial.h"
+#include "../../lib/systick_delay.h"
 #include "keypad.h"
 #include "lpc_types.h"
 
 int main() {
-  i2c1_init();
   serial_init();
+  i2c1_init();
+  lcd_init();
+  lcd_clear_display();
+  systick_init();
 
   char keypad;
+  char prev = 0;
   char out[17];
+  uint8_t addr = 0x00;
+
+  systick_delay_flag_init(250);
 
   while (1) {
     keypad = keypad_read();
 
-    // snprintf(out, 17, "Keypad: 0x%x\r\n", keypad);
-    // write_usb_serial_blocking(out, 17);
-
-    if (keypad != 0) {
-      write_usb_serial_blocking("out: ", 6);
-      write_usb_serial_blocking(&keypad, 1);
-      write_usb_serial_blocking("\r\n", 2);
+    if (keypad == 0 || (keypad == prev && !systick_flag())) {
+      prev = keypad;
+      continue;
     }
+
+    prev = keypad;
+
+    write_usb_serial_blocking("out: ", 6);
+    write_usb_serial_blocking(&keypad, 1);
+    write_usb_serial_blocking("\r\n", 2);
+
+    lcd_send_char(keypad, addr);
+    if (addr >= 0x0F && addr < 0x40) {
+      addr = 0x40;
+    } else if (addr >= 0x4F) {
+      addr = 0x00;
+    } else {
+      addr++;
+    }
+
+    systick_delay_flag_reset();
   }
 }
