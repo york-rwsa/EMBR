@@ -33,5 +33,5 @@ void dac_update_data(uint32_t val) {
 }
 
 void dac_update_voltage(float voltage) {
-  DAC_UpdateValue(LPC_DAC, (1023 / MAX_VOLTAGE) * voltage);
+  DAC_UpdateValue(LPC_DAC, (1023 / DAC_MAX_VOLTAGE) * voltage);
 }
