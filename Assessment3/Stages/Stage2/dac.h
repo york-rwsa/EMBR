@@ -9,3 +9,4 @@
 void dac_init();
 void dac_update_data(uint32_t val);
 void dac_update_voltage(float val);
+void dac_pincfg();

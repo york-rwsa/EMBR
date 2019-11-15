@@ -16,6 +16,18 @@ void dac_init() {
   DAC_Init(LPC_DAC);
 }
 
+void dac_pincfg() {
+  PINSEL_CFG_Type PinCfg = {
+    .OpenDrain = PINSEL_PINMODE_NORMAL,
+    .Pinmode = PINSEL_PINMODE_NORMAL,
+    .Funcnum = DAC_FUNC,
+    .Portnum = DAC_PORT,
+    .Pinnum = DAC_PIN,
+  };
+
+  PINSEL_ConfigPin(&PinCfg);
+}
+
 void dac_update_data(uint32_t val) {
   DAC_UpdateValue(LPC_DAC, val);
 }
