@@ -1,10 +1,26 @@
-#include <stdio.h>
 #include "../../lib/i2c.h"
 #include "../../lib/lcd.h"
 #include "../../lib/serial.h"
 #include "../../lib/systick_delay.h"
 #include "keypad.h"
+
+#include <stdio.h>
+
 #include "lpc_types.h"
+#include "lpc17xx_gpio.h"
+
+#define KEYPAD_INT_PIN 23
+#define KEYPAD_INT_PORT 0
+#define KEYPAD_INT_EDGE 1
+volatile uint8_t keypad_pressed_flag = 0;
+
+void EINT3_IRQHandler() {
+  if (GPIO_GetIntStatus(KEYPAD_INT_PORT, KEYPAD_INT_PIN, KEYPAD_INT_EDGE)) {
+    // serial_printf("keypad int");
+    GPIO_ClearInt(KEYPAD_INT_PORT, 1 << KEYPAD_INT_PIN);
+    keypad_pressed_flag = 1;
+  }
+}
 
 int main() {
   serial_init();
@@ -13,6 +29,13 @@ int main() {
   lcd_clear_display();
   systick_init();
 
+  // edgeState = 0: rising
+  // edgeState = 1: falling
+  GPIO_IntCmd(0, 1<<23, 1);
+  NVIC_EnableIRQ(EINT3_IRQn);
+  keypad_set_as_inputs();
+
+
   char keypad;
   char prev = 0;
   char out[17];
@@ -20,8 +43,16 @@ int main() {
 
   systick_delay_flag_init(250);
 
+  serial_printf("starting keypad test");
+
   while (1) {
+    if (!keypad_pressed_flag) {
+      continue;
+    }
+    
     keypad = keypad_read();
+    keypad_pressed_flag = 0;
+    keypad_set_as_inputs();
 
     if (keypad == 0 || (keypad == prev && !systick_flag())) {
       prev = keypad;
