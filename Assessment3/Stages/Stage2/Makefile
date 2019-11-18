@@ -49,7 +49,7 @@ LDFLAGS+=-L$(CMSIS)/lib -lDriversLPC17xxgnu
 EXECNAME	= bin/main
 
 # Source files provided by the user to build the project
-OBJ		= main.o dac.o ../../lib/serial.o ../../lib/lcd.o ../../lib/i2c.o ../../lib/systick_delay.o
+OBJ		= main.o dac.o gpdma_dac.o ../../lib/serial.o ../../lib/lcd.o ../../lib/i2c.o ../../lib/systick_delay.o
 
 # Commands handled by this makefile
 all: 	main
