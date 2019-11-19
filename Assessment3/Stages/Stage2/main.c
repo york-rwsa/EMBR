@@ -20,7 +20,7 @@ int main () {
   serial_printf("Preparing sinewave \r\n");
   // prepare sine wave
   int i;
-  uint32_t sinewave[NUMBER_OF_SAMPLES];
+  int32_t sinewave[NUMBER_OF_SAMPLES];
   for (i = 0; i < NUMBER_OF_SAMPLES; i++) {
     sinewave[i] = 512 * sin(2*PI*i/NUMBER_OF_SAMPLES);
     sinewave[i] = ((sinewave[i] + 512) // offset by 512 (half of DAC val)
@@ -28,7 +28,7 @@ int main () {
                   | 1 << 16; // Set DACR bias bit (bit 16)
   }
 
-  init_gpdma(sinewave, NUMBER_OF_SAMPLES, SIGNAL_FREQ);
+  gpdma_config_and_start((uint32_t *) sinewave, NUMBER_OF_SAMPLES, SIGNAL_FREQ);
   
   while(1);
 }
