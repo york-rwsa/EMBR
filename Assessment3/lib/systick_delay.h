@@ -40,4 +40,12 @@ void systick_init();
  */
 uint8_t systick_flag();
 
+
+/**
+ * @brief enables systick interrupts to go at ms milliseconds
+ *
+ * @param ms how often to fire systick int. Must be less than 168
+ */
+void systick_enable(uint8_t ms);
+
 #endif
