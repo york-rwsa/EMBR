@@ -5,7 +5,7 @@
 
 #include "../../lib/serial.h"
 
-void gpdma_config(uint32_t* source, uint16_t size, GPDMA_LLI_Type* LLI, GPDMA_Channel_CFG_Type* dma_cfg) {
+void gpdma_config(uint32_t* source, uint16_t size, uint8_t ch, GPDMA_LLI_Type* LLI, GPDMA_Channel_CFG_Type* dma_cfg) {
   LLI->SrcAddr = (uint32_t) source;
   LLI->DstAddr = (uint32_t) &(LPC_DAC->DACR); // copy to dacr
   LLI->NextLLI = (uint32_t) LLI; // point to itself so it transfers infinitely
@@ -14,7 +14,7 @@ void gpdma_config(uint32_t* source, uint16_t size, GPDMA_LLI_Type* LLI, GPDMA_Ch
                   | 2 << 21  // dest width 32bit
                   | 1 << 26; // increment source by one after each transfer
 
-  dma_cfg->ChannelNum = 0;
+  dma_cfg->ChannelNum = ch;
   dma_cfg->SrcMemAddr = (uint32_t) source;
   dma_cfg->DstMemAddr = (uint32_t) &(LPC_DAC->DACR);
   dma_cfg->DMALLI = (uint32_t) LLI;
@@ -28,14 +28,17 @@ void gpdma_config(uint32_t* source, uint16_t size, GPDMA_LLI_Type* LLI, GPDMA_Ch
 }
 
 void gpdma_dac_config (uint16_t size, uint32_t transfer_freq) {
-  uint32_t time_out = DAC_CLK_MHZ / (transfer_freq * size);
   DAC_CONVERTER_CFG_Type dac_cfg;
   dac_cfg.CNT_ENA = SET;
   dac_cfg.DMA_ENA = SET;
 
   dac_init();
-  DAC_SetDMATimeOut(LPC_DAC, time_out);
+  gpdma_dac_config_timeout(size, transfer_freq);
   DAC_ConfigDAConverterControl(LPC_DAC, &dac_cfg);
+}
+
+void gpdma_dac_config_timeout (uint16_t size, uint32_t transfer_freq) {
+  DAC_SetDMATimeOut(LPC_DAC, DAC_CLK_MHZ / (transfer_freq * size));
 }
 
 void gpdma_dac_start(uint8_t ch) {
