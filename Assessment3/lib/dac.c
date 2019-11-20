@@ -20,7 +20,7 @@ void dac_pincfg() {
   PINSEL_ConfigPin(&PinCfg);
 }
 
-void dac_update_data(uint32_t val) {
+void dac_update_data(uint16_t val) {
   DAC_UpdateValue(LPC_DAC, val);
 }
 
