@@ -45,6 +45,17 @@ char keypad_read() {
   return 0;
 }
 
+void keypad_set_as_inputs() {
+  uint8_t data = 0xF;
+  I2C_M_SETUP_Type cfg;
+  cfg.sl_addr7bit = KEYPAD_ADDRESS;
+  cfg.rx_length = 0;
+  cfg.tx_data = &data;
+  cfg.tx_length = 1;
+
+  I2C_MasterTransferData(I2C1DEV, &cfg, I2C_TRANSFER_POLLING);
+}
+
 uint8_t one_hot_decoder_4bit(uint8_t val) {
   val &= 0x0F;
   switch (val) {
