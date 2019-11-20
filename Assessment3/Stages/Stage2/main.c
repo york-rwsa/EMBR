@@ -26,24 +26,30 @@ int main () {
   serial_printf("Preparing sinewave \r\n");
   // prepare sine wave
   int32_t sinewave[NUMBER_OF_SAMPLES];
-  int32_t sinewave2[NUMBER_OF_SAMPLES];
-
   
   GPDMA_LLI_Type LLI;
   GPDMA_Channel_CFG_Type dma_cfg;
-
-
 
   serial_printf("Init, 0.5v 60hz\r\n");
   gen_sinewave(sinewave, NUMBER_OF_SAMPLES, 0.5);
   gpdma_config((uint32_t *) sinewave, NUMBER_OF_SAMPLES, 0, &LLI, &dma_cfg);
   gpdma_dac_config(NUMBER_OF_SAMPLES, 60);
   gpdma_dac_start(0);
+
   while(1) {
     systick_delay_blocking(300);
     gpdma_dac_config_timeout(NUMBER_OF_SAMPLES, 30);
     systick_delay_blocking(300);
     gpdma_dac_config_timeout(NUMBER_OF_SAMPLES, 60);
+    
+    gen_sinewave(sinewave, NUMBER_OF_SAMPLES, 1);
+
+    systick_delay_blocking(300);
+    gpdma_dac_config_timeout(NUMBER_OF_SAMPLES, 30);
+    systick_delay_blocking(300);
+    gpdma_dac_config_timeout(NUMBER_OF_SAMPLES, 60);
+    
+    gen_sinewave(sinewave, NUMBER_OF_SAMPLES, 0.5);
   }
 }
 
