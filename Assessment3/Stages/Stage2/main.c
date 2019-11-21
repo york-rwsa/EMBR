@@ -1,16 +1,17 @@
+#include <math.h>
+
 #include "lpc_types.h"
 #include "lpc17xx_gpdma.h"
 #include "lpc17xx_dac.h"
-
-#include <math.h>
-
-#include "gpdma_dac.h"
+#include "lpc17xx_systick.h"
+#include "lpc17xx_gpio.h"
 
 #include "../../lib/serial.h"
 #include "../../lib/systick_delay.h"
+#include "../../lib/i2c.h"
+#include "../../lib/keypad.h"
 
-#include "lpc17xx_systick.h"
-#include "lpc17xx_gpdma.h"
+#include "gpdma_dac.h"
 
 #define NUMBER_OF_SAMPLES 64
 #define PI (float)(3.141592654)
@@ -18,12 +19,28 @@
 #define SIGNAL_FREQ 60
 
 void gen_sinewave(int32_t *sinewave, int32_t samples, float amplitude_v);
+volatile uint8_t keypad_pressed_flag = 0;
+
+void EINT3_IRQHandler() {
+  if (GPIO_GetIntStatus(KEYPAD_INT_PORT, KEYPAD_INT_PIN, KEYPAD_INT_EDGE)) {
+    GPIO_ClearInt(KEYPAD_INT_PORT, 1 << KEYPAD_INT_PIN);
+    keypad_pressed_flag = 1;
+  }
+}
+
 
 int main () {
   serial_init();
+  i2c1_init();
   serial_printf("Starting Stage2\r\n");
   systick_init();
   serial_printf("Preparing sinewave \r\n");
+  
+  GPIO_IntCmd(0, 1<<23, 1);
+  NVIC_EnableIRQ(EINT3_IRQn);
+  keypad_set_as_inputs();
+
+  serial_printf("Keypad int setup\r\n");
   // prepare sine wave
   int32_t sinewave[NUMBER_OF_SAMPLES];
   
@@ -37,6 +54,11 @@ int main () {
   gpdma_dac_start(0);
 
   while(1) {
+    if (keypad_pressed_flag) {
+      gpdma_dac_stop(0);
+      break;
+    }
+    
     systick_delay_blocking(300);
     gpdma_dac_config_timeout(NUMBER_OF_SAMPLES, 30);
     systick_delay_blocking(300);
@@ -51,6 +73,8 @@ int main () {
     
     gen_sinewave(sinewave, NUMBER_OF_SAMPLES, 0.5);
   }
+
+  return 0;
 }
 
 void gen_sinewave(int32_t *sinewave, int32_t samples, float amplitude_v) {
