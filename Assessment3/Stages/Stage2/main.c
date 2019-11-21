@@ -24,6 +24,7 @@ volatile uint8_t keypad_pressed_flag = 0;
 void EINT3_IRQHandler() {
   if (GPIO_GetIntStatus(KEYPAD_INT_PORT, KEYPAD_INT_PIN, KEYPAD_INT_EDGE)) {
     GPIO_ClearInt(KEYPAD_INT_PORT, 1 << KEYPAD_INT_PIN);
+    serial_printf("keypadint\r\n");
     keypad_pressed_flag = 1;
   }
 }

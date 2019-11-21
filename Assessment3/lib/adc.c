@@ -9,9 +9,9 @@ void adc_init() {
   PINSEL_CFG_Type PinCfg = {
     .OpenDrain = PINSEL_PINMODE_NORMAL,
     .Pinmode = PINSEL_PINMODE_TRISTATE,
-    .Funcnum = ADC_0_FUNC,
-    .Portnum = ADC_0_PORT,
-    .Pinnum = ADC_0_PIN,
+    .Funcnum = ADC_1_FUNC,
+    .Portnum = ADC_1_PORT,
+    .Pinnum = ADC_1_PIN,
   };
 
   PINSEL_ConfigPin(&PinCfg);
@@ -22,14 +22,14 @@ void adc_init() {
 uint32_t adc_read_blocking() {
   ADC_StartCmd(LPC_ADC, ADC_START_NOW);
 
-  while(!ADC_ChannelGetStatus(LPC_ADC, ADC_CHANNEL_0, ADC_DATA_DONE));
-  return ADC_ChannelGetData(LPC_ADC, ADC_CHANNEL_0);
+  while(!ADC_ChannelGetStatus(LPC_ADC, ADC_CHANNEL_1, ADC_DATA_DONE));
+  return ADC_ChannelGetData(LPC_ADC, ADC_CHANNEL_1);
 }
 
 void adc_int_config (void (*adc_int_handler)(uint32_t value)) {
   adc_callback = adc_int_handler;
   ADC_IntConfig(LPC_ADC, ADC_ADINTEN0, ENABLE);
-  ADC_ChannelCmd(LPC_ADC, 0, ENABLE);
+  ADC_ChannelCmd(LPC_ADC, 1, ENABLE);
 }
 
 void adc_start() {
@@ -45,7 +45,7 @@ void adc_stop() {
 }
 
 void ADC_IRQHandler(void) {
-  if (ADC_ChannelGetStatus(LPC_ADC, ADC_CHANNEL_0, ADC_DATA_DONE)) {
-    adc_callback(ADC_ChannelGetData(LPC_ADC, ADC_CHANNEL_0));
+  if (ADC_ChannelGetStatus(LPC_ADC, ADC_CHANNEL_1, ADC_DATA_DONE)) {
+    adc_callback(ADC_ChannelGetData(LPC_ADC, ADC_CHANNEL_1));
   }
 }

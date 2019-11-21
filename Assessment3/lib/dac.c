@@ -8,6 +8,13 @@ void dac_init() {
   DAC_Init(LPC_DAC);
 }
 
+void dac_default_cfg() {
+  DAC_CONVERTER_CFG_Type dac_cfg;
+  dac_cfg.CNT_ENA = RESET;
+  dac_cfg.DMA_ENA = RESET;
+  DAC_ConfigDAConverterControl(LPC_DAC, &dac_cfg);
+}
+
 void dac_pincfg() {
   PINSEL_CFG_Type PinCfg = {
     .OpenDrain = PINSEL_PINMODE_NORMAL,

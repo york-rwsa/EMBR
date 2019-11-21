@@ -5,6 +5,10 @@
 #define ADC_0_PORT 0
 #define ADC_0_FUNC 1
 
+#define ADC_1_PIN 24
+#define ADC_1_PORT 0
+#define ADC_1_FUNC 1
+
 #define ADC_INT_ENABLE NVIC_EnableIRQ(ADC_IRQn)
 #define ADC_INT_DISABLE NVIC_DisableIRQ(ADC_IRQn)
 
