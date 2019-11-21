@@ -3,13 +3,13 @@
 
 #include "pwm.h"
 
-void pwm_init() {
+void pwm_init(uint32_t match0) {
   PWM_TIMERCFG_Type cfg;
   cfg.PrescaleOption = PWM_TIMER_PRESCALE_TICKVAL;
   cfg.PrescaleValue = 1;
   PWM_Init(LPC_PWM1, PWM_MODE_TIMER, &cfg);
 
-  PWM_MatchUpdate(LPC_PWM1, 0, 256, PWM_MATCH_UPDATE_NOW);
+  PWM_MatchUpdate(LPC_PWM1, 0, match0, PWM_MATCH_UPDATE_NOW);
 
   PWM_MATCHCFG_Type match_cfg;
   match_cfg.MatchChannel = 0;

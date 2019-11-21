@@ -14,7 +14,7 @@ typedef enum pwm_pin {
   PWM_PIN_26 = 0
 } pwm_pin_t;
 
-void pwm_init();
+void pwm_init(uint32_t match0);
 
 void pwm_config_pin(pwm_pin_t pin);
 

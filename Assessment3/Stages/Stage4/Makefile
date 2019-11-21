@@ -50,7 +50,7 @@ EXECNAME	= bin/main
 
 # Source files provided by the user to build the project
 LIB   = ../../lib
-OBJ		= main.o pwm.o $(LIB)/serial.o
+OBJ		= main.o pwm.o $(LIB)/serial.o $(LIB)/systick_delay.o
 
 # Commands handled by this makefile
 all: 	main
