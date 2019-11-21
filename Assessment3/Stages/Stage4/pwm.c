@@ -6,37 +6,38 @@
 void pwm_init() {
   PWM_TIMERCFG_Type cfg;
   cfg.PrescaleOption = PWM_TIMER_PRESCALE_TICKVAL;
-  cfg.PrescaleValue = 0;
+  cfg.PrescaleValue = 1;
   PWM_Init(LPC_PWM1, PWM_MODE_TIMER, &cfg);
+
+  PWM_MatchUpdate(LPC_PWM1, 0, 256, PWM_MATCH_UPDATE_NOW);
 
   PWM_MATCHCFG_Type match_cfg;
   match_cfg.MatchChannel = 0;
   match_cfg.IntOnMatch = DISABLE;
   match_cfg.ResetOnMatch = ENABLE;
   match_cfg.StopOnMatch = DISABLE;
-
   PWM_ConfigMatch(LPC_PWM1, &match_cfg);
 }
 
 void pwm_config_pin(pwm_pin_t pin) {
   pwm_pincfg(pin);
+  PWM_ChannelConfig(LPC_PWM1, (uint8_t) pin, PWM_CHANNEL_SINGLE_EDGE);
 
   PWM_MATCHCFG_Type match_cfg;
-  match_cfg.MatchChannel = (uint8_t) pin + 1;
+  match_cfg.MatchChannel = PWM_PIN_CHANNEL(pin);
   match_cfg.IntOnMatch = DISABLE;
   match_cfg.ResetOnMatch = DISABLE;
   match_cfg.StopOnMatch = DISABLE;
 
   PWM_ConfigMatch(LPC_PWM1, &match_cfg);
-  PWM_ChannelConfig(LPC_PWM1, (uint8_t) pin, PWM_CHANNEL_SINGLE_EDGE);
 }
 
 void pwm_config_pin_match(pwm_pin_t pin, uint32_t value) {
-  PWM_MatchUpdate(LPC_PWM1, (uint8_t) pin + 1, value, PWM_MATCH_UPDATE_NOW);
+  PWM_MatchUpdate(LPC_PWM1, PWM_PIN_CHANNEL(pin), value, PWM_MATCH_UPDATE_NOW);
 }
 
 void pwm_enable_pin(pwm_pin_t pin) {
-  PWM_ChannelCmd(LPC_PWM1, (uint8_t) pin, ENABLE);
+  PWM_ChannelCmd(LPC_PWM1, PWM_PIN_CHANNEL(pin), ENABLE);
 }
 
 void pwm_start() {
