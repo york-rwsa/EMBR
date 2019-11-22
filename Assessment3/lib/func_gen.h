@@ -3,7 +3,7 @@
 /**
  * @brief gens a sinewave for the DAC centered around 1.165V
  * shifts the bits into the right pattern for putting directly in to the DACR register
- * 
+ *
  * @param sinewave pointer to buffer
  * @param samples size of buffer
  * @param amplitude_v amplitude voltage
