@@ -3,7 +3,7 @@
 #define PWM_PORT 2
 #define PWM_FUNC 1
 
-#define PWM_PIN_CHANNEL(pin) ((uint8_t) pin + 1)
+#define PWM_PIN_CHANNEL(pin) ((uint8_t)pin + 1)
 
 typedef enum pwm_pin {
   PWM_PIN_21 = 5,

@@ -6,8 +6,8 @@
 
 #include <stdio.h>
 
-#include "lpc_types.h"
 #include "lpc17xx_gpio.h"
+#include "lpc_types.h"
 
 #define KEYPAD_INT_PIN 23
 #define KEYPAD_INT_PORT 0
@@ -31,10 +31,9 @@ int main() {
 
   // edgeState = 0: rising
   // edgeState = 1: falling
-  GPIO_IntCmd(0, 1<<23, 1);
+  GPIO_IntCmd(0, 1 << 23, 1);
   NVIC_EnableIRQ(EINT3_IRQn);
   keypad_set_as_inputs();
-
 
   char keypad;
   char prev = 0;
@@ -49,7 +48,7 @@ int main() {
     if (!keypad_pressed_flag) {
       continue;
     }
-    
+
     keypad = keypad_read();
     keypad_pressed_flag = 0;
     keypad_set_as_inputs();

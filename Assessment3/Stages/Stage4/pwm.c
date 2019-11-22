@@ -1,5 +1,5 @@
-#include "lpc17xx_pwm.h"
 #include "lpc17xx_pinsel.h"
+#include "lpc17xx_pwm.h"
 
 #include "pwm.h"
 
@@ -21,7 +21,7 @@ void pwm_init(uint32_t match0) {
 
 void pwm_config_pin(pwm_pin_t pin) {
   pwm_pincfg(pin);
-  PWM_ChannelConfig(LPC_PWM1, (uint8_t) pin, PWM_CHANNEL_SINGLE_EDGE);
+  PWM_ChannelConfig(LPC_PWM1, (uint8_t)pin, PWM_CHANNEL_SINGLE_EDGE);
 
   PWM_MATCHCFG_Type match_cfg;
   match_cfg.MatchChannel = PWM_PIN_CHANNEL(pin);
@@ -52,8 +52,8 @@ void pwm_pincfg(pwm_pin_t pin) {
     .Pinmode = PINSEL_PINMODE_NORMAL,
     .Funcnum = PWM_FUNC,
     .Portnum = PWM_PORT,
-    .Pinnum = (uint8_t) pin,
-  };  
+    .Pinnum = (uint8_t)pin,
+  };
 
   PINSEL_ConfigPin(&PinCfg);
 }

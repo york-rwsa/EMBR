@@ -1,7 +1,7 @@
 #include "lpc_types.h"
 
-#define KEYPAD_ADDRESS  0x21
-#define KEYPAD_INT_PIN  23
+#define KEYPAD_ADDRESS 0x21
+#define KEYPAD_INT_PIN 23
 #define KEYPAD_INT_PORT 0
 #define KEYPAD_INT_EDGE 1
 

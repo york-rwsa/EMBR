@@ -1,9 +1,9 @@
 #include "../../lib/serial.h"
 
-#include "pwm.h"
 #include "../../lib/systick_delay.h"
+#include "pwm.h"
 
-int main () {
+int main() {
   serial_init();
   systick_init();
 
@@ -13,7 +13,7 @@ int main () {
   pwm_config_pin_match(PWM_PIN_21, 0);
   pwm_config_pin(PWM_PIN_21);
   pwm_enable_pin(PWM_PIN_21);
-  
+
   serial_printf("starting pwm \r\n");
   pwm_start();
 

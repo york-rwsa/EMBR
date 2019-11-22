@@ -40,7 +40,6 @@ void systick_init();
  */
 uint8_t systick_flag();
 
-
 /**
  * @brief enables systick interrupts to go at ms milliseconds
  *

@@ -102,7 +102,7 @@ char map_to_op(char ch) {
       return '+';
     case 'B':
       return '-';
-    case 'C': 
+    case 'C':
       return '/';
     case '*':
       return '*';

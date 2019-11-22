@@ -9,7 +9,7 @@ void adc_int(uint32_t val);
 
 #define AVG_POINTS 8
 
-int main () {
+int main() {
   adc_init();
   dac_init();
   serial_init();
@@ -20,8 +20,9 @@ int main () {
   serial_printf("starting main loop\r\n");
 
   while (1) {
-    if (!read) continue;
-    
+    if (!read)
+      continue;
+
     dac_update_data(adc_val * 1023 / 4096);
     read = 0;
     ADC_INT_ENABLE;

@@ -3,7 +3,7 @@
 
 #include "adc.h"
 
-void (*adc_callback) (uint32_t value);
+void (*adc_callback)(uint32_t value);
 
 void adc_init() {
   PINSEL_CFG_Type PinCfg = {
@@ -22,11 +22,12 @@ void adc_init() {
 uint32_t adc_read_blocking() {
   ADC_StartCmd(LPC_ADC, ADC_START_NOW);
 
-  while(!ADC_ChannelGetStatus(LPC_ADC, ADC_CHANNEL_1, ADC_DATA_DONE));
+  while (!ADC_ChannelGetStatus(LPC_ADC, ADC_CHANNEL_1, ADC_DATA_DONE))
+    ;
   return ADC_ChannelGetData(LPC_ADC, ADC_CHANNEL_1);
 }
 
-void adc_int_config (void (*adc_int_handler)(uint32_t value)) {
+void adc_int_config(void (*adc_int_handler)(uint32_t value)) {
   adc_callback = adc_int_handler;
   ADC_IntConfig(LPC_ADC, ADC_ADINTEN0, ENABLE);
   ADC_ChannelCmd(LPC_ADC, 1, ENABLE);
